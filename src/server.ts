@@ -33,7 +33,7 @@ const app = new Elysia()
       }
 
       const inputFile = "vzor.docx.docx";
-      const outputFileName = `${projectName}_${programName}.docx`;
+      const outputFileName = `${projectName.replace(/\s+/g, '_')}_${programName.replace(/\s+/g, '_')}.docx`;
       const outputFile = `public/documents/${outputFileName}`;
 
       const result = await processDocument({
