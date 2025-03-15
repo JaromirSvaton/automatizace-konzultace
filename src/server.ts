@@ -1,5 +1,7 @@
 import { Elysia } from 'elysia';
 import { processDocument } from './processDocument.ts';
+import { cors } from '@elysiajs/cors';
+import { staticPlugin } from '@elysiajs/static';
 
 interface RequestBody {
   projectName: string;
@@ -8,8 +10,19 @@ interface RequestBody {
   keyAccountName: string;
 }
 
+interface ProcessResponse {
+  message: string;
+  downloadUrl?: string;
+}
+
 const app = new Elysia()
-  .post('/process', async ({ body }: { body: RequestBody }) => {
+  .use(cors())
+  .use(staticPlugin({
+    assets: 'public',
+    prefix: ''
+  }))
+  .get('/', () => Bun.file('public/index.html'))
+  .post('/process', async ({ body }: { body: RequestBody }): Promise<ProcessResponse> => {
     try {
       const { projectName, programName, clientName, keyAccountName } = body;
 
@@ -20,7 +33,8 @@ const app = new Elysia()
       }
 
       const inputFile = "vzor.docx.docx";
-      const outputFile = `${projectName}_${programName}.docx`;
+      const outputFileName = `${projectName}_${programName}.docx`;
+      const outputFile = `public/documents/${outputFileName}`;
 
       const result = await processDocument({
         inputPath: inputFile,
@@ -33,7 +47,8 @@ const app = new Elysia()
 
       if (result.success) {
         return {
-          message: `Document '${outputFile}' was successfully created.`
+          message: `Document was successfully created.`,
+          downloadUrl: `/documents/${outputFileName}`
         };
       } else {
         return {

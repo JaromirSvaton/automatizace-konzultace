@@ -6,6 +6,8 @@
     "dev": "bun --hot run src/server.ts"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.2.0",
+    "@elysiajs/static": "^1.2.0",
     "docx": "^8.5.0",
     "elysia": "^0.8.17"
   },
